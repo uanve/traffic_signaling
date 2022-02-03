@@ -53,6 +53,10 @@ nx.draw_networkx_edge_labels(G,pos,edge_labels=edge_labels)
 nx.draw(G,pos, node_size=1500, with_labels=True) #,edge_color=edge_colors,edge_cmap=plt.cm.Reds)
 pylab.show()
 
+class Street:
+    def __init__(self, id, name, Origin, Destination, tt, ):
+    self.name = name
+    self.age = age
 
 
 
