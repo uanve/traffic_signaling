@@ -1,1 +1,18 @@
-hola 
+            red
+t = 0   -----|------------------------|-------
+
+
+            green
+t = 1   -----|------------------------|-------
+
+- go forward
+    green
+    first queue
+- stop
+    red
+
+    
+- create graph
+- locate cars
+- plan routes
+- 
