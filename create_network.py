@@ -93,10 +93,10 @@ edge_labels=dict([((u,v,),d['label']) for u,v,d in G.edges(data=True)])
 # red_edges = [('C','D'),('D','A')]
 # edge_colors = ['black' if not edge in red_edges else 'red' for edge in G.edges()]
 
-pos=nx.spring_layout(G)
-nx.draw_networkx_edge_labels(G,pos,edge_labels=edge_labels)
-nx.draw(G,pos, node_size=1500, with_labels=True) #,edge_color=edge_colors,edge_cmap=plt.cm.Reds)
-pylab.show()
+# pos=nx.spring_layout(G)
+# nx.draw_networkx_edge_labels(G,pos,edge_labels=edge_labels)
+# nx.draw(G,pos, node_size=1500, with_labels=True) #,edge_color=edge_colors,edge_cmap=plt.cm.Reds)
+# pylab.show()
 
 def status():
     print("INI STATUS: ")
@@ -107,31 +107,37 @@ def status():
     for s in G_data:
         print("street: {}, arrivals: {}".format(s.name,s.arrivals))
     print("FIN STATUS: ")
+    
+arrived_car = []
 
-def advance_cars():
+def advance_cars(t):
     for car in Cars:
         if car.arrived:
             # print("car {} end street {}".format(car.id, car.street_name))
             pass
             
         else:
-            print("FORWARD: car {} in street {}".format(car.id, car.street_name))
+            #go forward
+            # print("FORWARD: car {} in street {}".format(car.id, car.street_name))
             # advance one position
             car.position_street +=1
             
             
             # arrived end street?
             if car.position_street == car.tt:
-                print("car {} arrived end street {}".format(car.id, car.street_name))
+                #has arrived
+                # print("car {} arrived end street {}".format(car.id, car.street_name))
                 car.arrived=True
                 if (car.position_route+1)==len(car.route):
-                    print("CAR {} HAS ARRIVED AT DESTINATION!!!".format(car.id))
+                    #has arrived destination
+                    # print("CAR {} HAS ARRIVED AT DESTINATION!!!".format(car.id))
+                    arrived_car.append((car.id, t))
                 else:
                     G_data[car.street].arrivals.append(car.id)
             
         
         
-def advance_intersections():        
+def advance_intersections(t):        
     for s in G_data:
         if s.light == "green" and len(s.arrivals)>0:
             #first car in arrivals in
@@ -145,24 +151,24 @@ def advance_intersections():
             car.street_name = id_to_street[car.street]
             car.position_street = 0
             car.tt = G_data[car.street].tt
-            
-            print("INTERSECTION  car {} from {} to {}".format(car.id, s.name, car.street_name))
+            #enters intersection
+            # print("INTERSECTION  car {} from {} to {}".format(car.id, s.name, car.street_name))
         
         #change car position
         
-def lights(t):
-    #intersection 1
-    i = t%3
-    if i == 2:
-        G_data[1].light = "green"
-        G_data[2].light = "red"
-    else:
-        G_data[1].light = "red"
-        G_data[2].light = "green"
+# def lights(t):
+#     #intersection 1
+#     i = t%3
+#     if i == 2:
+#         G_data[1].light = "green"
+#         G_data[2].light = "red"
+#     else:
+#         G_data[1].light = "red"
+#         G_data[2].light = "green"
         
-    #intersection 0,2
-    G_data[0].light = "green"
-    G_data[4].light = "green"
+#     #intersection 0,2
+#     G_data[0].light = "green"
+#     G_data[4].light = "green"
 
 def lights(t):
     for node in G.nodes:
@@ -186,20 +192,19 @@ def lights(t):
                     
                 
             
-for t in range(12):
-    print(t)
-    lights(t)
-    for i in range(S): print(G_data[i].light )
+# for t in range(12):
+#     print(t)
+#     lights(t)
+#     for i in range(S): print(G_data[i].light )
         
-        
-
-
-for t in range(10):
-    
+from tqdm import tqdm        
+# for t in range(D):
+print("Start Loop:")
+for t in tqdm(range(D)):
     lights(t)
-    advance_cars()
+    advance_cars(t)
     # status()
-    advance_intersections()
+    advance_intersections(t)
     # status()
     # t += 1
-    print(t)
+    # print(t)
