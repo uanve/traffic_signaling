@@ -170,25 +170,35 @@ def advance_intersections(t):
 #     G_data[0].light = "green"
 #     G_data[4].light = "green"
 
+node_with_in_edges = []
+
+edge_to_street = {}
+for edge in G.edges:
+    edge_to_street[edge] = G.get_edge_data(edge[0],edge[1])['label']
+    
+
+for node in G.nodes:
+    n_income = len(G.in_edges(node))
+    edges = list(G.in_edges(node))
+    if n_income == 1:
+        street_id = G.get_edge_data(edges[0][0],edges[0][1])['label']
+        G_data[street_id].light = "green"
+        
+    else:
+        node_with_in_edges.append((node,len(edges),edges))
+        
+       
+
 def lights(t):
-    for node in G.nodes:
-        n_income = len(G.in_edges(node))
-        edges = list(G.in_edges(node))
-        if n_income == 1:
-            street_id = G.get_edge_data(edges[0][0],edges[0][1])['label']
-            G_data[street_id].light = "green"
+    for i,node in enumerate(node_with_in_edges):
+        i = t%node[1]
+        for idx,edge in enumerate(node[2]): 
+            street_id = edge_to_street[edge]
+            if idx==i:
+                G_data[street_id].light = "green"
             
-        else:
-            i = t % n_income
-            # print(i)
-            for idx,edge in enumerate(edges):
-                street_id = G.get_edge_data(edge[0],edge[1])['label']
-                if idx==i:
-                    G_data[street_id].light = "green"
-                
-                else:
-                    G_data[street_id].light = "red"
-                    
+            else:
+                G_data[street_id].light = "red"
                     
 
             
@@ -200,12 +210,15 @@ def lights(t):
         
 from tqdm import tqdm        
 print("Start Loop:")
-for t in range(10):
-# for t in tqdm(range(D)):
-    %time lights(t)
-    %time advance_cars(t)
-    %time advance_intersections(t)
+# for t in range(10):
+for t in tqdm(range(D)):
+    lights(t)
+    advance_cars(t)
+    advance_intersections(t)
     # print(t)
 
 score = 1000 * len(arrived_car) + sum([D-c[1] for c in arrived_car])
 print("{}/{} veh. arrived with a total score of {}".format(len(arrived_car), V,score))
+
+
+plt.hist([e[1] for e in arrived_car],bins=100)
