@@ -190,21 +190,22 @@ def lights(t):
                     G_data[street_id].light = "red"
                     
                     
-                
+
             
 # for t in range(12):
 #     print(t)
 #     lights(t)
 #     for i in range(S): print(G_data[i].light )
+
         
 from tqdm import tqdm        
-# for t in range(D):
 print("Start Loop:")
-for t in tqdm(range(D)):
-    lights(t)
-    advance_cars(t)
-    # status()
-    advance_intersections(t)
-    # status()
-    # t += 1
+for t in range(10):
+# for t in tqdm(range(D)):
+    %time lights(t)
+    %time advance_cars(t)
+    %time advance_intersections(t)
     # print(t)
+
+score = 1000 * len(arrived_car) + sum([D-c[1] for c in arrived_car])
+print("{}/{} veh. arrived with a total score of {}".format(len(arrived_car), V,score))
