@@ -1,10 +1,10 @@
 ## Different traffic light programs
 #### if an intersection has 1 street -> traffic light always green
 #### otherwise:
-- A basic: each street is green for 1 second respectively
-- B dynamic: green light assign depending on the queue at each street (Random choice with probability proportional to the queue)
-- B.1 dynamic with priority: consider the urgency of each car in the queue - (e.g. prioritice streets with long travel times)
-- C static: green light assign considering total flow at each street of the intersection
+- A   basic:                  each street is green for 1 second respectively
+- B   dynamic:                green light assign depending on the queue at each street (Random choice with probability proportional to the queue)
+- B.1 dynamic with priority:  consider the urgency of each car in the queue - (e.g. prioritice streets with long travel times)
+- C   static:                 green light assign considering total flow at each street of the intersection
 
 
 <table>
