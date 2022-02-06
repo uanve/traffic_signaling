@@ -207,11 +207,11 @@ def lights(t):
 #     lights(t)
 #     for i in range(S): print(G_data[i].light )
 
-        
+import time        
 from tqdm import tqdm        
 print("Start Loop:")
-# for t in range(10):
-for t in tqdm(range(D)):
+for t in range(10):
+# for t in tqdm(range(D)):
     lights(t)
     advance_cars(t)
     advance_intersections(t)
