@@ -38,7 +38,7 @@ class Car:
         
         
 # Get data from file
-f = open("./qualification_round_2021.in/c.txt")
+f = open("./qualification_round_2021.in/b.txt")
 
 #first file line
 # D: simulation duration
@@ -206,37 +206,6 @@ for i in range(I):
     else:
         pass
     
-def lights(t):
-    for i in range(I):
-        size = size_intersection[i]
-        if size>=2:
-            which_is_green( intersection_to_streets[i])
-            
-            # street_0, street_1 = intersection_to_streets[i]
-            
-            # d_0, d_1 = len(G_data[street_0].arrivals), len(G_data[street_1].arrivals)
-            
-            
-            # if d_0+d_1 == 0:
-            #     G_data[street_0].light = "red"
-            #     G_data[street_1].light = "red"
-            # elif d_0==0 and d_1>0:
-            #     G_data[street_0].light = "red"
-            #     G_data[street_1].light = "green"
-                
-            # elif d_0>0 and d_1==0:
-            #     G_data[street_0].light = "green"
-            #     G_data[street_1].light = "red"
-            
-            # else:
-            #     w_0 = d_0/(d_0+d_1)
-            #     # w_1 = d_1/(d_0+d_1)
-            #     if np.random.rand() < w_0:
-            #         G_data[street_0].light = "green"
-            #         G_data[street_1].light = "red"
-            #     else:
-            #         G_data[street_0].light = "red"
-            #         G_data[street_1].light = "green"
 
 import random                    
 def which_is_green(street_ids):
@@ -252,13 +221,19 @@ def which_is_green(street_ids):
         G_data[s_chosen].light = "green"
         
         return s_chosen
+    
+def lights(t):
+    for i in range(I):
+        size = size_intersection[i]
+        if size>=2:
+            which_is_green( intersection_to_streets[i])
 
 ###### NEW LIGHT PROGRAM #######
 
     
 len_queue_time = np.zeros((D,S))   
 
-
+t0 = time.time()
 
 import time        
 from tqdm import tqdm        
@@ -272,52 +247,73 @@ for t in tqdm(range(D)):
     for i,s in enumerate(G_data):
         len_queue_time[(t,i)] = len(s.arrivals)
     # print(t)
-
+t1 = time.time()
 score = 1000 * len(arrived_car) + sum([D-c[1] for c in arrived_car])
 print("{}/{} veh. arrived with a total score of {}".format(len(arrived_car), V,score))
 
 
 plt.hist([e[1] for e in arrived_car],bins=100)
 
-
-plt.plot(np.mean(len_queue_time,axis=1))
-plt.plot(np.mean(len_queue_time,axis=0))
-
-node_queue = [(i,e) for i,e in enumerate(np.mean(len_queue_time,axis=0))]
-node_queue.sort(key=lambda x: x[1], reverse=True)
-
-plt.plot(len_queue_time[:,8229])
-
-
-
 #Statistics
-def get_streets_intersection(street_id):
-    node = G_data[street_id].Destination
-    return [edge_to_street[s] for s in G.in_edges(node)]
+# plt.plot(np.mean(len_queue_time,axis=1))
+# plt.plot(np.mean(len_queue_time,axis=0))
+
+# node_queue = [(i,e) for i,e in enumerate(np.mean(len_queue_time,axis=0))]
+# node_queue.sort(key=lambda x: x[1], reverse=True)
+
+# plt.plot(len_queue_time[:,8229])
+
+# def get_streets_intersection(street_id):
+#     node = G_data[street_id].Destination
+#     return [edge_to_street[s] for s in G.in_edges(node)]
 
 
-plt.plot(len_queue_time[:2000,7252])
-for s in get_streets_intersection(7252):
-    plt.plot(len_queue_time[:50,s],label=s)
-    plt.legend()
+# plt.plot(len_queue_time[:2000,7252])
+# for s in get_streets_intersection(7252):
+#     plt.plot(len_queue_time[:50,s],label=s)
+#     plt.legend()
     
     
 
-        
-        
-        
-        
-        
-                
-                    
-                
-                
-                
-            
-            
-        
-    
+# results = []
+results.append([score,len(arrived_car), V, t1-t0])
+print(results[-1])
 
+
+
+
+
+flow_street = np.zeros(S)
+weight_street = np.zeros(S)
+for car in Cars:
+    for s in car.route:
+        flow_street[s] += 1
+        
+for i in range(I):
+    street_ids = intersection_to_streets[i]
     
+    flow_intersection = sum([flow_street[s] for s in street_ids])
+    for s in street_ids:
+        if flow_street[s] > 0:
+            weight_street[s] = flow_street[s]/flow_intersection
+            if weight_street[s]<0.038:
+                print(i)
+    
+    
+min(weight_street)
+
+
+[weight_street[s] for s in street_ids]
+
+xxx = np.array(weight_street)
+
+min(xxx[xxx!=0])
+
+
+for w in [weight_street[s] for s in street_ids]:
+    print(w,np.round(100*w,0))
+
+
+
 
     
