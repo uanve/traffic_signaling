@@ -4,7 +4,6 @@ import numpy as np
 os.chdir('C:/Users/joanv/OneDrive/Escritorio/code/traffic_signaling')
 
 
-
 class Street:
     def __init__(self, id, name, Origin, Destination, tt ):
 
@@ -39,7 +38,7 @@ class Car:
         
         
 # Get data from file
-f = open("./qualification_round_2021.in/b.txt")
+f = open("./qualification_round_2021.in/c.txt")
 
 #first file line
 # D: simulation duration
@@ -72,10 +71,8 @@ for i in range(10,10+V):
     list_streets = [street_to_id[s] for s in streets]
     new_car = Car(i, list_streets)
     
-    
     Cars.append(new_car)
 # del next_line, n_streets, streets
-    
 f.close()
     
 
@@ -136,7 +133,6 @@ def advance_cars(t):
                     G_data[car.street].arrivals.append(car.id)
             
         
-        
 def advance_intersections(t):        
     for s in G_data:
         if s.light == "green" and len(s.arrivals)>0:
@@ -154,22 +150,7 @@ def advance_intersections(t):
             #enters intersection
             # print("INTERSECTION  car {} from {} to {}".format(car.id, s.name, car.street_name))
         
-        #change car position
-        
-# def lights(t):
-#     #intersection 1
-#     i = t%3
-#     if i == 2:
-#         G_data[1].light = "green"
-#         G_data[2].light = "red"
-#     else:
-#         G_data[1].light = "red"
-#         G_data[2].light = "green"
-        
-#     #intersection 0,2
-#     G_data[0].light = "green"
-#     G_data[4].light = "green"
-
+###### LIGHT PROGRAM #######
 node_with_in_edges = []
 
 edge_to_street = {}
@@ -200,21 +181,96 @@ def lights(t):
             else:
                 G_data[street_id].light = "red"
                     
+###### LIGHT PROGRAM #######
 
+###### NEW LIGHT PROGRAM #######
+print("Nª intersections: ",I)
+s_intersection = [s.Destination for s in G_data]
+# size_intersection = [(i, s_intersection.count(i)) for i in range(I)]
+# size_intersection.sort(key=lambda x: x[1], reverse=True)
+size_intersection = [s_intersection.count(i) for i in range(I)]
+intersection_to_streets = {}
+for intersection in range(I):
+    intersection_to_streets[intersection]=[i for i,val in enumerate(s_intersection) if val==intersection]
+
+
+size_inter_ = [c for c in size_intersection]
+[(i,size_inter_.count(i)) for i in set(size_inter_)]
+
+for i in range(I):
+    size = size_intersection[i]
+    if size == 1:
+        street_id = intersection_to_streets[i][0]
+        G_data[street_id].light = "green"
+        
+    else:
+        pass
+    
+def lights(t):
+    for i in range(I):
+        size = size_intersection[i]
+        if size>=2:
+            which_is_green( intersection_to_streets[i])
             
-# for t in range(12):
-#     print(t)
-#     lights(t)
-#     for i in range(S): print(G_data[i].light )
+            # street_0, street_1 = intersection_to_streets[i]
+            
+            # d_0, d_1 = len(G_data[street_0].arrivals), len(G_data[street_1].arrivals)
+            
+            
+            # if d_0+d_1 == 0:
+            #     G_data[street_0].light = "red"
+            #     G_data[street_1].light = "red"
+            # elif d_0==0 and d_1>0:
+            #     G_data[street_0].light = "red"
+            #     G_data[street_1].light = "green"
+                
+            # elif d_0>0 and d_1==0:
+            #     G_data[street_0].light = "green"
+            #     G_data[street_1].light = "red"
+            
+            # else:
+            #     w_0 = d_0/(d_0+d_1)
+            #     # w_1 = d_1/(d_0+d_1)
+            #     if np.random.rand() < w_0:
+            #         G_data[street_0].light = "green"
+            #         G_data[street_1].light = "red"
+            #     else:
+            #         G_data[street_0].light = "red"
+            #         G_data[street_1].light = "green"
+
+import random                    
+def which_is_green(street_ids):
+    len_arrivals = [len(G_data[s].arrivals) for s in street_ids]
+    total = sum(len_arrivals)
+    if total==0:
+        return
+    else:
+        for s in street_ids: G_data[s].light = "red"
+        weights = [len_i/total for len_i in len_arrivals]
+        s_chosen = random.choices(street_ids, weights)[0]
+        
+        G_data[s_chosen].light = "green"
+        
+        return s_chosen
+
+###### NEW LIGHT PROGRAM #######
+
+    
+len_queue_time = np.zeros((D,S))   
+
+
 
 import time        
 from tqdm import tqdm        
 print("Start Loop:")
-for t in range(10):
-# for t in tqdm(range(D)):
+# for t in range(10):
+for t in tqdm(range(D)):
     lights(t)
     advance_cars(t)
     advance_intersections(t)
+    
+    for i,s in enumerate(G_data):
+        len_queue_time[(t,i)] = len(s.arrivals)
     # print(t)
 
 score = 1000 * len(arrived_car) + sum([D-c[1] for c in arrived_car])
@@ -222,3 +278,46 @@ print("{}/{} veh. arrived with a total score of {}".format(len(arrived_car), V,s
 
 
 plt.hist([e[1] for e in arrived_car],bins=100)
+
+
+plt.plot(np.mean(len_queue_time,axis=1))
+plt.plot(np.mean(len_queue_time,axis=0))
+
+node_queue = [(i,e) for i,e in enumerate(np.mean(len_queue_time,axis=0))]
+node_queue.sort(key=lambda x: x[1], reverse=True)
+
+plt.plot(len_queue_time[:,8229])
+
+
+
+#Statistics
+def get_streets_intersection(street_id):
+    node = G_data[street_id].Destination
+    return [edge_to_street[s] for s in G.in_edges(node)]
+
+
+plt.plot(len_queue_time[:2000,7252])
+for s in get_streets_intersection(7252):
+    plt.plot(len_queue_time[:50,s],label=s)
+    plt.legend()
+    
+    
+
+        
+        
+        
+        
+        
+                
+                    
+                
+                
+                
+            
+            
+        
+    
+
+    
+
+    
