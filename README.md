@@ -46,7 +46,7 @@
 <tr><td>
 
 
-|   | score   | N_cars_arrived | N_cars_total | running time |
+|   | score   | arrived | total | running time |
 |---|---------|----------------|--------------|--------------|
 | a | 1001    | 1              | 2            | 0.003        |
 | b | 4565642 | 1000           | 1000         | 43.480       |
@@ -58,7 +58,7 @@
 </td><td>
 
 
-|   | score   | N_cars_arrived | N_cars_total | running time |
+|   | score   | arrived | total | running time |
 |---|---------|----------------|--------------|--------------|
 | a | 1002    | 1              | 2            | 0.002        |
 | b | 4569004 | 1000           | 1000         | 48.863       |
