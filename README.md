@@ -3,6 +3,7 @@
 #### otherwise:
 - basic: each street is green for 1 second respectively
 - dynamic: green light assign depending on the queue at each street (Random choice with probability proportional to the queue)
+- dynamic with priority: consider the urgency of each car in the queue - (e.g. prioritice streets with long travel times)
 - static: green light assign considering total flow at each street of the intersection
 
 
