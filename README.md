@@ -1,4 +1,4 @@
-## Different traffic light programs
+# Google Hash Code 2021
 #### if an intersection has 1 street -> traffic light always green
 #### otherwise:
 - A   basic:                  each street is green for 1 second respectively
